@@ -1,0 +1,4 @@
+{
+    "prefix": "!",
+    "help_msg": "🔧**Need some Help?**\n\n\t***!play***, to add a song to the queue.\n\t***!skip***, will skip the current song being played from the queue.\n\t***!loop***, use this to toggle a loop of the current song being played.\n\t***!pause***, use this to pause and unpause the song and queue whenever you want.\n\t***!stop***, stops the song that's playing, empties the queue, and leaves the voice channel.\n\t***!queue***, lists the current songs that are in the queue."
+  }
