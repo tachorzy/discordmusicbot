@@ -247,7 +247,7 @@ function track(message, serverQueue){
     .setColor('#ff3e94')
     .setTitle(`Queue for ${message.guild.name}`)
     .setDescription(`**__Now Playing:__** \`${serverQueue.songs[0].title}\``)
-    .addField('\n', `\n`)
+    .addField(' \n', ` \n`)
     .addField('\n\n⬇️__Up Next__⬇️', `${output}`);
 
     message.channel.send({embeds: [queueEmbed]});
