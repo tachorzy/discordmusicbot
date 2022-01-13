@@ -286,6 +286,7 @@ function help(message){
   const helpEmbed = new Discord.MessageEmbed()
     .setColor('#ff3e94')
     .setTitle('🔧 Need some help?')
+    .setDescription(`Hi, I'm basically a Rythm clone but don't tell anyone I said that. You can use the commands below to queue songs or any **youtube** videos you like.`)
     .addField('!play [link or query]', 'to add a song to the queue.')
     .addField('!skip', 'will skip the current song being played from the queue.')
     .addField('!loop', 'use this to toggle a loop of the current song being played.')
