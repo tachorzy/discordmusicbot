@@ -235,7 +235,7 @@ function stop(message, serverQueue, userChannel){
 
 //prints out the queue. Will update this to be an embedded message, make it look all fancy
 function track(message, serverQueue){
-    if(serverQueue.songs === 0)
+    if(!serverQueue)
       return message.channel.send("the queue is currently empty.");
     var output = `**Song Queue for ${message.guild.name}**\n__Now Playing:__ ${serverQueue.songs[0].title}\n`;
     var i = 1;
