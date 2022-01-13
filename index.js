@@ -2,9 +2,9 @@
 const Discord = require("discord.js");
 require("dotenv").config();
 const {
-	prefix,
-  help_msg,
+	prefix
 } = require('./config.json');
+
 const ytdl = require('ytdl-core');
 const {google} = require('googleapis');
 const { joinVoiceChannel, createAudioPlayer, AudioPlayerStatus, createAudioResource, getVoiceConnection, voice } = require('@discordjs/voice');
@@ -40,7 +40,7 @@ client.on("message", async message => {
   const voiceChannel = message.member.voice.channel;
 
   if(message.content.toLowerCase().startsWith(`${prefix}help`)){
-    return message.channel.send(help_msg);
+    return help(message);
   }
 
   if(!voiceChannel) return message.channel.send("⚠️ You're not even in a voice channel, nerd <:4Weird:661277640811872266>");
@@ -237,13 +237,19 @@ function stop(message, serverQueue, userChannel){
 function track(message, serverQueue){
     if(!serverQueue)
       return message.channel.send("the queue is currently empty.");
-    var output = `**Song Queue for ${message.guild.name}**\n__Now Playing:__ ${serverQueue.songs[0].title}\n`;
+    var output = ``;
     var i = 1;
     serverQueue.songs.forEach(song => {
       output += `${i}. ${song.title}\n` 
       i++;
     })
-    message.channel.send(output);
+    const queueEmbed = new Discord.MessageEmbed()
+    .setColor('#ff3e94')
+    .setTitle(`Queue for ${message.guild.name}`)
+    .setDescription(`**__Now Playing:__** ${serverQueue.songs[0].title}`)
+    .addField('\n\n⬇️__Up Next__⬇️', `${output}`);
+
+    message.channel.send({embeds: [queueEmbed]});
 }
 
 function loop(message, serverQueue, userChannel){
@@ -275,6 +281,22 @@ function pause(message, serverQueue, userChannel){
     message.channel.send('⏸️**Unpaused** <a:docDJ:929366945885716510>')
   }
 }
+
+function help(message){
+  const helpEmbed = new Discord.MessageEmbed()
+    .setColor('#ff3e94')
+    .setTitle('🔧 Need some help?')
+    .addField('!play [link or query]', 'to add a song to the queue.')
+    .addField('!skip', 'will skip the current song being played from the queue.')
+    .addField('!loop', 'use this to toggle a loop of the current song being played.')
+    .addField('!pause', 'use this to pause and unpause the song and queue whenever you want.')
+    .addField('!stop', 'stops the song that\'s playing, empties the queue, and leaves the voice channel.')
+    .addField('!queue', 'lists the current songs that are in the queue.')
+
+  message.channel.send({embeds: [helpEmbed]})
+}
+
+
 
 //little easter egg
 client.on("message", msg => {
