@@ -237,16 +237,17 @@ function stop(message, serverQueue, userChannel){
 function track(message, serverQueue){
     if(!serverQueue)
       return message.channel.send("the queue is currently empty.");
-    var output = ``;
+    var output = '';
     var i = 1;
     serverQueue.songs.forEach(song => {
-      output += `${i}. ${song.title}\n` 
+      output += `\`${i}. ${song.title}\`\n` 
       i++;
     })
     const queueEmbed = new Discord.MessageEmbed()
     .setColor('#ff3e94')
     .setTitle(`Queue for ${message.guild.name}`)
-    .setDescription(`**__Now Playing:__** ${serverQueue.songs[0].title}`)
+    .setDescription(`**__Now Playing:__** \`${serverQueue.songs[0].title}\``)
+    .addField('\n', `\n`)
     .addField('\n\n⬇️__Up Next__⬇️', `${output}`);
 
     message.channel.send({embeds: [queueEmbed]});
