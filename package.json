@@ -7,6 +7,9 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "engines": {
+    "node": "17.3.0"
+  },
   "author": "Tariq",
   "license": "ISC",
   "dependencies": {
@@ -21,6 +24,6 @@
     "libsodium-wrappers": "^0.7.9",
     "node": "^17.3.0",
     "youtube-search": "^1.1.6",
-    "ytdl-core": "^4.9.2"
+    "ytdl-core": "^4.10.0"
   }
 }
