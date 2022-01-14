@@ -244,8 +244,7 @@ function track(message, serverQueue){
         output += `${i}. \`${song.title}\`\n` 
       i++;
     })
-    if(output === '')
-      output = 'nothing!';
+    if(!!output) output = 'nothing! Use the !play command to add to the queue.';
     
     const queueEmbed = new Discord.MessageEmbed()
     .setColor('#ff3e94')
