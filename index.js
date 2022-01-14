@@ -240,7 +240,8 @@ function track(message, serverQueue){
     var output = '';
     var i = 1;
     serverQueue.songs.forEach(song => {
-      output += `${i}. \`${song.title}\`\n` 
+      if(i != 1)
+        output += `${i}. \`${song.title}\`\n` 
       i++;
     })
     const queueEmbed = new Discord.MessageEmbed()
