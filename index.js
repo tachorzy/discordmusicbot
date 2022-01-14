@@ -238,12 +238,15 @@ function track(message, serverQueue){
     if(!serverQueue)
       return message.channel.send("the queue is currently empty.");
     var output = '';
-    var i = 1;
+    var i = 0;
     serverQueue.songs.forEach(song => {
-      if(i != 1)
+      if(i != 0) //skips the first one which will be "now playing."
         output += `${i}. \`${song.title}\`\n` 
       i++;
     })
+    if(output === '')
+      output = 'nothing!';
+    
     const queueEmbed = new Discord.MessageEmbed()
     .setColor('#ff3e94')
     .setTitle(`Queue for ${message.guild.name}`)
