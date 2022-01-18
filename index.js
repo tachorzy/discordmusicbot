@@ -233,7 +233,7 @@ function stop(message, serverQueue, userChannel){
   return message.channel.send("🛑 **Stopping the queue** 🛑 Goodbye. <:OkayChamp:613374167319969814>")
 }
 
-//prints out the queue. Will update this to be an embedded message, make it look all fancy
+//prints out the queue.
 function track(message, serverQueue){
     if(!serverQueue)
       return message.channel.send("the queue is currently empty.");
@@ -290,7 +290,7 @@ function help(message){
     .setColor('#ff3e94')
     .setTitle('🔧 Need some help?')
     .setDescription(`Hi, I'm basically a Rythm clone. You can use the commands below to queue songs or any youtube videos you like.`)
-    .addField('!play [youtube link or query]', 'to add a song to the queue. If you use a link make sure it isn\`t age restricted.')
+    .addField('!play [youtube link or query]', 'to add a song to the queue. If you use a link make sure it isn\'t age restricted.')
     .addField('!skip', 'will skip the current song being played from the queue.')
     .addField('!loop', 'use this to toggle a loop of the current song being played.')
     .addField('!pause', 'use this to pause and unpause the song and queue whenever you want.')
@@ -299,8 +299,6 @@ function help(message){
 
   message.channel.send({embeds: [helpEmbed]})
 }
-
-
 
 //little easter egg
 client.on("message", msg => {
