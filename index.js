@@ -5,11 +5,9 @@ const {
 	prefix
 } = require('./config.json');
 
-//const ytdl = require('ytdl-core');
 const ytdl = require('play-dl');
 const {google} = require('googleapis');
 const { joinVoiceChannel, createAudioPlayer, AudioPlayerStatus, createAudioResource, getVoiceConnection, NoSubscriberBehavior, voice } = require('@discordjs/voice');
-//const { lookup } = require("dns"); //honestly forgot what this does OMEGALUL
 
 //sort out these intents later, this looks like a complete dumpster fire
 const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_BANS", "GUILD_EMOJIS_AND_STICKERS", "GUILD_INTEGRATIONS", "GUILD_WEBHOOKS", "GUILD_INVITES", "GUILD_VOICE_STATES", "GUILD_PRESENCES", "GUILD_MESSAGE_REACTIONS", "GUILD_MESSAGE_TYPING", "DIRECT_MESSAGE_REACTIONS", "DIRECT_MESSAGE_TYPING", "GUILD_MESSAGES", "DIRECT_MESSAGES"], partials: ["CHANNEL"] });
@@ -210,8 +208,8 @@ async function play(guild, song, connection, serverQueue){
       let temp = createAudioResource(stream.stream);
       player.play(temp);
     }
-    else {
-      serverQueue.songs.shift();
+    else { //FIX THIS DOWN HERE ASAP, THE QUEUE ISN'T WORKING
+      await serverQueue.songs.shift();
       play(guild, serverQueue.songs[0], connection, serverQueue);
     }
   });
