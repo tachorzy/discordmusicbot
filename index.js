@@ -171,7 +171,7 @@ async function addSong(message, serverQueue, songInfo, connection){
 }
 
 //uses the @discord.js/voice stand-alone library and libsodium wrappers
-function play(guild, song, connection, serverQueue){
+async function play(guild, song, connection, serverQueue){
   serverQueue = queue.get(guild.id);
   const subscription = connection.subscribe(player);
   console.log("ENTERED PLAY FUNCTION!");
