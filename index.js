@@ -5,17 +5,22 @@ const {
 	prefix
 } = require('./config.json');
 
-const ytdl = require('ytdl-core');
+//const ytdl = require('ytdl-core');
+const ytdl = require('play-dl');
 const {google} = require('googleapis');
-const { joinVoiceChannel, createAudioPlayer, AudioPlayerStatus, createAudioResource, getVoiceConnection, voice } = require('@discordjs/voice');
-const { lookup } = require("dns");
+const { joinVoiceChannel, createAudioPlayer, AudioPlayerStatus, createAudioResource, getVoiceConnection, NoSubscriberBehavior, voice } = require('@discordjs/voice');
+//const { lookup } = require("dns"); //honestly forgot what this does OMEGALUL
 
 //sort out these intents later, this looks like a complete dumpster fire
 const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MEMBERS", "GUILD_BANS", "GUILD_EMOJIS_AND_STICKERS", "GUILD_INTEGRATIONS", "GUILD_WEBHOOKS", "GUILD_INVITES", "GUILD_VOICE_STATES", "GUILD_PRESENCES", "GUILD_MESSAGE_REACTIONS", "GUILD_MESSAGE_TYPING", "DIRECT_MESSAGE_REACTIONS", "DIRECT_MESSAGE_TYPING", "GUILD_MESSAGES", "DIRECT_MESSAGES"], partials: ["CHANNEL"] });
 
 const queue = new Map();
 var connectedChannel; 
-const player = createAudioPlayer();
+const player = createAudioPlayer({
+  behaviors: {
+    noSubscriber: NoSubscriberBehavior.Play
+  }
+});
 var isLooped = false, isPaused = false; //will use this for managing loops between the play and loop functions
 
 //status logged on run
@@ -120,14 +125,15 @@ async function search(message, serverQueue, request, connection){
     q: request,
   }).then(async (response)  => { 
     try{
-      const songInfo = await ytdl.getInfo(`https://www.youtube.com/watch?v=${response.data.items[0].id.videoId}`);
+      //const songInfo = await ytdl.getInfo(`https://www.youtube.com/watch?v=${response.data.items[0].id.videoId}`);
+      songInfo = await ytdl.video_info(`https://www.youtube.com/watch?v=${response.data.items[0].id.videoId}`);      
       addSong(message, serverQueue, songInfo, connection);
     }catch(err){ //age restriction bypass using a nested try-catch, ugly but hey it works nicely, O(n)
       var i = 1;
       var songInfo;
       try{
         console.log(`attempt of bypass #${i}`);
-        songInfo = await ytdl.getInfo(`https://www.youtube.com/watch?v=${response.data.items[i].id.videoId}`);
+        songInfo = await ytdl.video_info(`https://www.youtube.com/watch?v=${response.data.items[i].id.videoId}`);
       } catch(err){
         i++;
       }
@@ -142,8 +148,9 @@ async function search(message, serverQueue, request, connection){
 //enqueues the song request to the queue, and invokes play()
 async function addSong(message, serverQueue, songInfo, connection){
   const song = {
-    title: songInfo.videoDetails.title,
-    url: songInfo.videoDetails.video_url
+    title: songInfo.video_details.title,
+    url: songInfo.video_details.url,
+    channel: songInfo.video_details.channel
   };
 
   if(!serverQueue){
@@ -166,7 +173,7 @@ async function addSong(message, serverQueue, songInfo, connection){
 }
 
 //uses the @discord.js/voice stand-alone library and libsodium wrappers
-function play(guild, song, connection, serverQueue){
+async function play(guild, song, connection, serverQueue){
   serverQueue = queue.get(guild.id);
   const subscription = connection.subscribe(player);
   console.log("ENTERED PLAY FUNCTION!");
@@ -174,26 +181,33 @@ function play(guild, song, connection, serverQueue){
   //checks if there's a song in the queue and if the bot is playing something
   if(!song){
     isLooped = false;
-  setTimeout(() => subscription.unsubscribe(), 200_000);
+    setTimeout(() => subscription.unsubscribe(), 200_000);
     connection.disconnect();
     connectedChannel = null;
     queue.delete(guild.id);
     return console.log(`Queue end. Bot disconnected.`);
   }
-
-  let resource = createAudioResource((ytdl(song.url)));
+  console.log(`PASSING SONG URL TO STREAM ${song.url}`)
+  const stream = await ytdl.stream(song.url)
+  let resource = createAudioResource(stream.stream, {
+    inputType : stream.type
+  });
 
   player.play(resource);
   serverQueue.textChannel.send(`<a:docPls:929365030389035018> **Playing** 🎶 \`${song.title}\` NOW! <a:docPls:929365030389035018>`);
   console.log(`logged: playing [${song.title}, ${song.url}]}`)
+  
   player.on(AudioPlayerStatus.Playing, () =>{
+    console.log('AudioPlayerStatus: playing')
     if(isPaused)
       player.pause();
   })
 
   player.on(AudioPlayerStatus.Idle, () => {
+    console.log('AudioPlayerStatus: idle')
     if(isLooped){
-      let temp = createAudioResource((ytdl(song.url)));
+      let stream = ytdl.stream(song.url)
+      let temp = createAudioResource(stream.stream);
       player.play(temp);
     }
     else {
@@ -203,6 +217,7 @@ function play(guild, song, connection, serverQueue){
   });
 
   player.on(AudioPlayerStatus.Paused, () => {
+    console.log('AudioPlayerStatus: paused')
     if(!isPaused)
       player.unpause();
   })
