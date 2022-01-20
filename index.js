@@ -201,11 +201,6 @@ async function play(guild, song, connection, serverQueue){
       player.pause();
   })
 
-  player.on(AudioPlayerStatus.Buffering, () =>{
-    serverQueue.songs.shift();
-    play(guild, serverQueue.songs[0], connection, serverQueue);
-  });
-
   player.on(AudioPlayerStatus.Idle, () => {
     console.log('AudioPlayerStatus: idle')
     if(isLooped){
