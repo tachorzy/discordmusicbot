@@ -170,13 +170,8 @@ async function addSong(message, serverQueue, songInfo, connection){
   }
 }
 
-async function getStream(url){
-  const stream = await ytdl.stream(song.url)
-  return stream;
-}
-
 //uses the @discord.js/voice stand-alone library and libsodium wrappers
-function play(guild, song, connection, serverQueue){
+async function play(guild, song, connection, serverQueue){
   serverQueue = queue.get(guild.id);
   const subscription = connection.subscribe(player);
   console.log("ENTERED PLAY FUNCTION!");
@@ -190,12 +185,12 @@ function play(guild, song, connection, serverQueue){
     queue.delete(guild.id);
     return console.log(`Queue end. Bot disconnected.`);
   }
-  let stream = getStream(song.url)
-  console.log(`PASSING SONG URL TO STREAM ${song.url}`)
+  const stream = await ytdl.stream(song.url)
   let resource = createAudioResource(stream.stream, {
     inputType : stream.type
   });
 
+  console.log(`is resource undefined?: ${resource}`)
   player.play(resource);
   serverQueue.textChannel.send(`<a:docPls:929365030389035018> **Playing** 🎶 \`${song.title}\` NOW! <a:docPls:929365030389035018>`);
   console.log(`logged: playing [${song.title}, ${song.url}]}`)
@@ -209,9 +204,8 @@ function play(guild, song, connection, serverQueue){
   player.on(AudioPlayerStatus.Idle, () => {
     console.log('AudioPlayerStatus: idle')
     if(isLooped){
-      let stream = ytdl.stream(song.url)
-      let temp = createAudioResource(stream.stream);
-      player.play(temp);
+      //let temp = createAudioResource(getStream(song.url).stream);
+      player.play(resource);
     }
     else { //FIX THIS DOWN HERE ASAP, THE QUEUE ISN'T WORKING
       serverQueue.songs.shift();
