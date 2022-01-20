@@ -209,7 +209,7 @@ async function play(guild, song, connection, serverQueue){
       player.play(temp);
     }
     else { //FIX THIS DOWN HERE ASAP, THE QUEUE ISN'T WORKING
-      await serverQueue.songs.shift();
+      serverQueue.songs.shift();
       play(guild, serverQueue.songs[0], connection, serverQueue);
     }
   });
