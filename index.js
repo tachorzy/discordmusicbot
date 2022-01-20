@@ -170,8 +170,13 @@ async function addSong(message, serverQueue, songInfo, connection){
   }
 }
 
+
+async function getStream(url){
+   return stream = await ytdl.stream(url)
+}
+
 //uses the @discord.js/voice stand-alone library and libsodium wrappers
-async function play(guild, song, connection, serverQueue){
+function play(guild, song, connection, serverQueue){
   serverQueue = queue.get(guild.id);
   const subscription = connection.subscribe(player);
   console.log("ENTERED PLAY FUNCTION!");
@@ -186,7 +191,8 @@ async function play(guild, song, connection, serverQueue){
     return console.log(`Queue end. Bot disconnected.`);
   }
   console.log(`PASSING SONG URL TO STREAM ${song.url}`)
-  const stream = await ytdl.stream(song.url)
+  //const stream = await ytdl.stream(song.url)
+  const stream = getStream(song.url);
   let resource = createAudioResource(stream.stream, {
     inputType : stream.type
   });
