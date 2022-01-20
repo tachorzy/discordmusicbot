@@ -170,11 +170,6 @@ async function addSong(message, serverQueue, songInfo, connection){
   }
 }
 
-
-async function getStream(url){
-   return stream = await ytdl.stream(url)
-}
-
 //uses the @discord.js/voice stand-alone library and libsodium wrappers
 function play(guild, song, connection, serverQueue){
   serverQueue = queue.get(guild.id);
@@ -182,7 +177,7 @@ function play(guild, song, connection, serverQueue){
   console.log("ENTERED PLAY FUNCTION!");
 
   //checks if there's a song in the queue and if the bot is playing something
-  if(!song){
+  if(!serverQueue){
     isLooped = false;
     setTimeout(() => subscription.unsubscribe(), 200_000);
     connection.disconnect();
@@ -191,8 +186,7 @@ function play(guild, song, connection, serverQueue){
     return console.log(`Queue end. Bot disconnected.`);
   }
   console.log(`PASSING SONG URL TO STREAM ${song.url}`)
-  //const stream = await ytdl.stream(song.url)
-  const stream = getStream(song.url);
+  const stream = await ytdl.stream(song.url)
   let resource = createAudioResource(stream.stream, {
     inputType : stream.type
   });
