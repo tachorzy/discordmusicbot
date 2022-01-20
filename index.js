@@ -177,7 +177,7 @@ async function play(guild, song, connection, serverQueue){
   console.log("ENTERED PLAY FUNCTION!");
 
   //checks if there's a song in the queue and if the bot is playing something
-  if(!serverQueue){
+  if(!song){
     isLooped = false;
     setTimeout(() => subscription.unsubscribe(), 200_000);
     connection.disconnect();
